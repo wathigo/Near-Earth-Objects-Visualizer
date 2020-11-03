@@ -1,11 +1,5 @@
 import { FETCH_ASTEROIDS_ERROR, FETCH_ASTEROIDS_SUCCESS, GET_ASTEROID_DATA, LOADING } from '../actionTypes';
-
-const initialState = {
-    asteroids: [],
-    asteroid: {},
-    error: null,
-    loading: false,
-  };
+import initialState from './initialState';
 
   export default function(state=initialState, action) {
       switch(action.type) {

@@ -6,25 +6,24 @@ import {
 } from './actionTypes';
 
 export const fetchData = () => {
-    apiKey = process.env.REACT_APP_NASA_API_KEY;
-    const url = `https://api.nasa.gov/neo/rest/v1/feed?start_date=START_DATE&end_date=END_DATE&api_key==${apiKey}`;
-    dispatch(loading(true));
-    const resp = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-        },
-    });
+    const apiKey = process.env.REACT_APP_NASA_API_KEY;
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    const url = `https://api.nasa.gov/neo/rest/v1/feed?start_date=2020-01-01&end_date=2020-11-01&api_key=${apiKey}`;
+    return async dispatch => {
+        dispatch(loading(true));
+        const resp = await fetch(url, {
+            method: 'GET'
+        });
 
-    try {
-        const data = await resp.json();
-        dispatch(fetchAsteroidsSuccess(data));
-        dispatch(loading(false));
-    }
-    catch (err) {
-        dispatch(fetchAsteroidsError(err));
-        dispatch(loading(false));
+        try {
+            const data = await resp.json();
+            dispatch(fetchAsteroidsSuccess(data));
+            dispatch(loading(false));
+        }
+        catch (err) {
+            dispatch(fetchAsteroidsError(err));
+            dispatch(loading(false));
+        }
     }
 }
 
