@@ -5,10 +5,14 @@ import {
     LOADING,
 } from './actionTypes';
 
+import dates from '../helpers/date';
+
+const { today, lastWeek } = dates;
+
 export const fetchData = () => {
     const apiKey = process.env.REACT_APP_NASA_API_KEY;
     const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    const url = `https://api.nasa.gov/neo/rest/v1/feed?start_date=2020-01-01&end_date=2020-11-01&api_key=${apiKey}`;
+    const url = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${lastWeek}&end_date=${today}&api_key=${apiKey}`;
     return async dispatch => {
         dispatch(loading(true));
         const resp = await fetch(url, {
