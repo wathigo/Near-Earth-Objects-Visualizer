@@ -11,7 +11,9 @@ const Renderer = () => {
 
     useEffect(() => {
         // RENDERER
-        const renderer = new THREE.WebGLRenderer();
+        const renderer = new THREE.WebGLRenderer({
+            alpha: false,
+        });
         renderer.setClearColor("#121212", 1);
 
         renderingEl.current.appendChild(renderer.domElement);
@@ -31,8 +33,10 @@ const Renderer = () => {
 
         // TEXTURES
         const loader = new THREE.TextureLoader();
-        loader.crossOrigin = '';
-        const earthTexture = loader.load("../assets/earth.jpg");
+        const earthTexture = loader.load('/assets/earth.jpg');
+        const asteroidTexture = loader.load('/assets/asteroid.jpg');
+
+        console.log(earthTexture, asteroidTexture)
 
         // // MATERIALS
 
@@ -41,19 +45,20 @@ const Renderer = () => {
             color: 0x555555
         });
 
-        // MESHES
+        // GEOMETRY
         const geometry = new THREE.Geometry();
 
-        // let x, y, z;
-        // for (let i = 0; i < 2000; i++) {
-        //     x = (Math.random() * SCREEN_WIDTH * 2) - SCREEN_WIDTH;
-        //     y = (Math.random() * SCREEN_HEIGHT * 2) - SCREEN_HEIGHT;
-        //     z = (Math.random() * 3000) - 1500;
+        let x, y, z;
+        for (let i = 0; i < 2000; i++) {
+            x = (Math.random() * SCREEN_WIDTH * 2) - SCREEN_WIDTH;
+            y = (Math.random() * SCREEN_HEIGHT * 2) - SCREEN_HEIGHT;
+            z = (Math.random() * 3000) - 1500;
 
-        //     geometry.vertices.push(new THREE.Vector3(x, y, z));
+            geometry.vertices.push(new THREE.Vector3(x, y, z));
         };
 
-        createAsteroids(scene);
+
+        createAsteroids(scene, asteroidTexture);
 
         const earthGeometry = new THREE.SphereGeometry(1, 32, 16);
         const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
@@ -72,7 +77,7 @@ const Renderer = () => {
         createSpotlights(scene);
 
         const animate = () => {
-            requestAnimationFrame( animate );
+            requestAnimationFrame(animate);
             earthMesh.rotation.y += 0.15;
             controls.update();
             renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
