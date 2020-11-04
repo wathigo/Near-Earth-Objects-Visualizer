@@ -76,9 +76,9 @@ const Renderer = () => {
         // illuminate the earth
         createSpotlights(scene);
 
-        const animate = () => {
+        const animate = (time) => {
             requestAnimationFrame(animate);
-            earthMesh.rotation.y += 0.15;
+            earthMesh.rotation.y = time * 0.00015;
             controls.update();
             renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
             renderer.render(scene, camera);
