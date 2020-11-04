@@ -86,7 +86,7 @@ const Renderer = () => {
 
         animate()
 
-    }, [createAsteroids]);
+    }, []);
 
     return (
         <div ref={renderingEl} ></div>

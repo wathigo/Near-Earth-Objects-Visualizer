@@ -12,7 +12,7 @@ function App({ fetchAsteroids }) {
 
   useEffect(() => {
     fetchAsteroids()
-  }, [])
+  }, [fetchAsteroids])
   return (
     <div className="App">
       <Renderer />
