@@ -12,6 +12,7 @@ const { today, lastWeek } = dates;
 export const fetchData = () => {
     const apiKey = process.env.REACT_APP_NASA_API_KEY;
     const url = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${lastWeek}&end_date=${today}&api_key=${apiKey}`;
+    console.log(url)
     return async dispatch => {
         dispatch(loading(true));
         const resp = await fetch(url, {

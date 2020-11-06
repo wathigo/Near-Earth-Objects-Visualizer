@@ -22,7 +22,7 @@ const createRock = (size, spreadX, maxWidth, maxHeight, maxDepth, scene, asteroi
     const cube = new THREE.Mesh(geometry, texture);
     cube.castShadow = true;
     cube.receiveShadow = true;
-    cube.scale.set(1 + Math.random() * 0.4, 1 + Math.random() * 0.8, 1 + Math.random() * 0.4);
+    // cube.scale.set(1 + Math.random() * 0.4, 1 + Math.random() * 0.8, 1 + Math.random() * 0.4);
     cube.rotation.y = Math.PI/4;
     cube.rotation.x = Math.PI/4;
     const x = spreadX / 2 - Math.random() * spreadX;
