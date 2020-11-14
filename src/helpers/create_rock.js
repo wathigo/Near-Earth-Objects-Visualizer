@@ -1,41 +1,119 @@
 import * as THREE from "three";
 import ColorLuminance from "./color_luminance"
 
-const createRock = (size, spreadX, maxWidth, maxHeight, maxDepth, scene, asteroidTexture) => {
-    const geometry = new THREE.DodecahedronGeometry(size, 1);
-    geometry.vertices.forEach(function (v) {
-      v.x += (0 - Math.random() * (size / 4));
-      v.y += (0 - Math.random() * (size / 4));
-      v.z += (0 - Math.random() * (size / 4));
-    })
-    let color = '#111111';
-    color = ColorLuminance(color, 2 + Math.random() * 10);
-    // console.log(color);
-    const texture = new THREE.MeshStandardMaterial({
-      map: asteroidTexture,
-      // flatShading: THREE.FlatShading,
-      // shininess: 0.5,
-      roughness: 0.8,
-      metalness: 1
-    });
-  
-    const cube = new THREE.Mesh(geometry, texture);
-    cube.castShadow = true;
-    cube.receiveShadow = true;
-    // cube.scale.set(1 + Math.random() * 0.4, 1 + Math.random() * 0.8, 1 + Math.random() * 0.4);
-    cube.rotation.y = Math.PI/4;
-    cube.rotation.x = Math.PI/4;
-    const x = spreadX / 2 - Math.random() * spreadX;
-    const centeredness = 1 - (Math.abs(x) / (maxWidth / 2));
-    const y = (maxHeight / 2 - Math.random() * maxHeight) * centeredness
-    const z = (maxDepth / 2 - Math.random() * maxDepth) * centeredness
-    cube.position.set(x, y, z)
-    cube.r = {};
-    cube.r.x = Math.random() * 0.005;
-    cube.r.y = Math.random() * 0.005;
-    cube.r.z = Math.random() * 0.005;
-    scene.add(cube);
-    return cube;
+const TOOL_TIP_ENABLED_OBECTS = [];
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let latestMouseProjection;
+let hoveredObj;
+let tooltipDisplayTimeout;
+let renderer;
+let camera;
+
+const showTooltip = () => {
+  const divElement = document.querySelector("#tooltip");
+
+  if (divElement && latestMouseProjection) {
+    divElement.style.display = "block";
+    divElement.style.opacity = 0.0;
+
+    const canvasHalfWidth = renderer.domElement.offsetWidth / 2;
+    const canvasHalfHeight = renderer.domElement.offsetHeight / 2;
+
+    const tooltipPosition = latestMouseProjection.clone().project(camera);
+    tooltipPosition.x = (tooltipPosition.x * canvasHalfWidth) + canvasHalfWidth + renderer.domElement.offsetLeft;
+    tooltipPosition.y = -(tooltipPosition.y * canvasHalfHeight) + canvasHalfHeight + renderer.domElement.offsetTop;
+
+    const tootipWidth = divElement.offsetWidth;
+    const tootipHeight = divElement.offsetHeight;
+
+    divElement.style.left = `${tooltipPosition.x - tootipWidth / 2}px`;
+    divElement.style.top = `${tooltipPosition.y - tootipHeight - 5}px`
+
+    console.log(divElement)
+    divElement.textContent = hoveredObj.userData.tooltipText;
+
+    setTimeout(function () {
+      divElement.style.opacity = 1.0;
+    }, 25);
+  }
+}
+
+const hideTooltip = () => {
+  const divElement = document.querySelector("#tooltip");
+  if (divElement) {
+    divElement.style.display = "none";
+  }
+}
+
+const updateMouseCoords = (event, coordsObj) => {
+  coordsObj.x = ((event.clientX - renderer.domElement.offsetLeft + 0.5) / window.innerWidth) * 2 - 1;
+  coordsObj.y = -((event.clientY - renderer.domElement.offsetTop + 0.5) / window.innerHeight) * 2 + 1;
+}
+
+const handleManipulationUpdate = () => {
+  raycaster.setFromCamera(mouse, camera); {
+    var intersects = raycaster.intersectObjects(TOOL_TIP_ENABLED_OBECTS);
+    if (intersects.length > 0) {
+      latestMouseProjection = intersects[0].point;
+      hoveredObj = intersects[0].object;
+    }
   }
 
-  export default createRock;
+  if (tooltipDisplayTimeout || !latestMouseProjection) {
+    clearTimeout(tooltipDisplayTimeout);
+    tooltipDisplayTimeout = undefined;
+    hideTooltip();
+  }
+
+  if (!tooltipDisplayTimeout && latestMouseProjection) {
+    tooltipDisplayTimeout = setTimeout(function () {
+      tooltipDisplayTimeout = undefined;
+      showTooltip();
+    }, 330);
+  }
+}
+
+const onMouseMove = (event) => {
+  updateMouseCoords(event, mouse);
+
+    latestMouseProjection = undefined;
+    hoveredObj = undefined;
+    handleManipulationUpdate();
+}
+
+const createRock = (size, spreadX, maxWidth, maxHeight, maxDepth, scene, asteroidTexture, asteroid, render, cam) => {
+  renderer = render;
+  camera = cam;
+  const geometry = new THREE.DodecahedronGeometry(size, 1);
+  geometry.vertices.forEach(function (v) {
+    v.x += (0 - Math.random() * (size / 4));
+    v.y += (0 - Math.random() * (size / 4));
+    v.z += (0 - Math.random() * (size / 4));
+  })
+  let color = '#111111';
+  color = ColorLuminance(color, 2 + Math.random() * 10);
+  // console.log(color);
+  const texture = new THREE.MeshStandardMaterial({
+    map: asteroidTexture,
+    // flatShading: THREE.FlatShading,
+    // shininess: 0.5,
+    roughness: 0.8,
+    metalness: 1
+  });
+
+  const cube = new THREE.Mesh(geometry, texture);
+  const x = spreadX / 2 - Math.random() * spreadX;
+  const centeredness = 1 - (Math.abs(x) / (maxWidth / 2));
+  const y = (maxHeight / 2 - Math.random() * maxHeight) * centeredness
+  const z = (maxDepth / 2 - Math.random() * maxDepth) * centeredness
+  cube.position.set(x, y, z)
+  console.log(x, y, z)
+  cube.userData.tooltipText = JSON.stringify(asteroid);
+  TOOL_TIP_ENABLED_OBECTS.push(cube)
+  scene.add(cube);
+  window.addEventListener('mousemove', onMouseMove, false);
+}
+
+export default createRock;

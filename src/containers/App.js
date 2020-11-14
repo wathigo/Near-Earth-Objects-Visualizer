@@ -11,20 +11,14 @@ import { fetchData } from '../redux/actions';
 
 function App(props) {
   console.log(props)
-  const { fetchAsteroids, asteroids: { loading } } = props;
+  const { fetchAsteroids, asteroids: { loading, asteroids } } = props;
   useEffect(() => {
     fetchAsteroids()
   }, [fetchAsteroids]);
-  const el = loading ? (
-    <CircularProgress />
-  ) : (
-      <div className="App">
-        <Renderer />
-      </div>
-    )
-  return
-  (
-    { el }
+  return (
+    <div>
+      { loading ? <CircularProgress /> : <Renderer asteroids={asteroids === undefined ? {} : asteroids.near_earth_objects} />}
+    </div>
   )
 }
 

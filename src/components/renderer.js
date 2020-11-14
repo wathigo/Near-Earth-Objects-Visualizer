@@ -6,7 +6,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import createAsteroids from '../helpers/create_asteroids';
 import createSpotlights from '../helpers/create_spotlights';
 
-const Renderer = () => {
+const Renderer = ({ asteroids }) => {
     const renderingEl = useRef(null);
 
     useEffect(() => {
@@ -58,7 +58,7 @@ const Renderer = () => {
         };
 
 
-        createAsteroids(scene, asteroidTexture);
+        createAsteroids(scene, asteroidTexture, asteroids, renderer, camera);
 
         const earthGeometry = new THREE.SphereGeometry(1, 32, 16);
         const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
@@ -86,7 +86,7 @@ const Renderer = () => {
 
         animate()
 
-    }, []);
+    }, [asteroids]);
 
     return (
         <div ref={renderingEl} ></div>
