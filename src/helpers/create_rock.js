@@ -27,6 +27,7 @@ const showTooltip = () => {
 
     const tootipWidth = divElement.offsetWidth;
     const tootipHeight = divElement.offsetHeight;
+    console.log(tootipWidth, tootipHeight);
 
     divElement.style.left = `${tooltipPosition.x - tootipWidth / 2}px`;
     divElement.style.top = `${tooltipPosition.y - tootipHeight - 5}px`
@@ -84,6 +85,7 @@ const onMouseMove = (event) => {
 }
 
 const createRock = (size, spreadX, maxWidth, maxHeight, maxDepth, scene, asteroidTexture, asteroid, render, cam) => {
+  const { lunar } = asteroid.close_approach_data[0].miss_distance
   renderer = render;
   camera = cam;
   const geometry = new THREE.DodecahedronGeometry(size, 1);
@@ -104,12 +106,14 @@ const createRock = (size, spreadX, maxWidth, maxHeight, maxDepth, scene, asteroi
   });
 
   const cube = new THREE.Mesh(geometry, texture);
-  const x = spreadX / 2 - Math.random() * spreadX;
+  const randomPos = [1, -1]
+  const pos = randomPos[Math.floor(Math.random() * randomPos.length)];
+  const x = lunar * pos;
   const centeredness = 1 - (Math.abs(x) / (maxWidth / 2));
-  const y = (maxHeight / 2 - Math.random() * maxHeight) * centeredness
   const z = (maxDepth / 2 - Math.random() * maxDepth) * centeredness
+  const y = lunar * pos;
   cube.position.set(x, y, z)
-  console.log(x, y, z)
+  console.log(JSON.stringify())
   cube.userData.tooltipText = JSON.stringify(asteroid);
   TOOL_TIP_ENABLED_OBECTS.push(cube)
   scene.add(cube);
