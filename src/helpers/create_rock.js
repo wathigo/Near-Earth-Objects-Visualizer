@@ -27,12 +27,10 @@ const showTooltip = () => {
 
     const tootipWidth = divElement.offsetWidth;
     const tootipHeight = divElement.offsetHeight;
-    console.log(tootipWidth, tootipHeight);
 
     divElement.style.left = `${tooltipPosition.x - tootipWidth / 2}px`;
     divElement.style.top = `${tooltipPosition.y - tootipHeight - 5}px`
 
-    console.log(divElement)
     divElement.textContent = hoveredObj.userData.tooltipText;
 
     setTimeout(function () {
@@ -79,16 +77,23 @@ const handleManipulationUpdate = () => {
 const onMouseMove = (event) => {
   updateMouseCoords(event, mouse);
 
-    latestMouseProjection = undefined;
-    hoveredObj = undefined;
-    handleManipulationUpdate();
+  latestMouseProjection = undefined;
+  hoveredObj = undefined;
+  handleManipulationUpdate();
 }
 
 const createRock = (size, spreadX, maxWidth, maxHeight, maxDepth, scene, asteroidTexture, asteroid, render, cam) => {
-  const { lunar } = asteroid.close_approach_data[0].miss_distance
+  const { lunar } = asteroid.close_approach_data[0].miss_distance;
+  const { kilometers } = asteroid.close_approach_data[0].miss_distance;
+  const { is_potentially_hazardous_asteroid, id } = asteroid;
   renderer = render;
   camera = cam;
   const geometry = new THREE.DodecahedronGeometry(size, 1);
+  const asteroidData = `
+  Id:                   ${id} \n
+  Potential threat:     ${is_potentially_hazardous_asteroid} \n
+  Distance from earth:  ${kilometers} kilometers
+  `
   geometry.vertices.forEach(function (v) {
     v.x += (0 - Math.random() * (size / 4));
     v.y += (0 - Math.random() * (size / 4));
@@ -96,11 +101,8 @@ const createRock = (size, spreadX, maxWidth, maxHeight, maxDepth, scene, asteroi
   })
   let color = '#111111';
   color = ColorLuminance(color, 2 + Math.random() * 10);
-  // console.log(color);
   const texture = new THREE.MeshStandardMaterial({
     map: asteroidTexture,
-    // flatShading: THREE.FlatShading,
-    // shininess: 0.5,
     roughness: 0.8,
     metalness: 1
   });
@@ -113,8 +115,7 @@ const createRock = (size, spreadX, maxWidth, maxHeight, maxDepth, scene, asteroi
   const z = (maxDepth / 2 - Math.random() * maxDepth) * centeredness
   const y = lunar * pos;
   cube.position.set(x, y, z)
-  console.log(JSON.stringify())
-  cube.userData.tooltipText = JSON.stringify(asteroid);
+  cube.userData.tooltipText = asteroidData;
   TOOL_TIP_ENABLED_OBECTS.push(cube)
   scene.add(cube);
   window.addEventListener('mousemove', onMouseMove, false);

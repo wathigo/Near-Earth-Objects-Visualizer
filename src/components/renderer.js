@@ -1,7 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from "three";
+import PropTypes from 'prop-types';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+
+import Stats from 'stats.js';
 
 import createAsteroids from '../helpers/create_asteroids';
 import createSpotlights from '../helpers/create_spotlights';
@@ -76,12 +79,18 @@ const Renderer = ({ asteroids }) => {
         // illuminate the earth
         createSpotlights(scene);
 
+        const stats = new Stats();
+        stats.showPanel( 1 ); 
+        document.body.appendChild( stats.dom );
+
         const animate = (time) => {
+            stats.begin();
             requestAnimationFrame(animate);
             earthMesh.rotation.y = time * 0.00015;
             controls.update();
             renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
             renderer.render(scene, camera);
+            stats.end();
         }
 
         animate()
@@ -92,5 +101,9 @@ const Renderer = ({ asteroids }) => {
         <div ref={renderingEl} ></div>
     )
 }
+
+Renderer.propTypes = {
+    asteroids: PropTypes.object.isRequired,
+  }
 
 export default Renderer;
