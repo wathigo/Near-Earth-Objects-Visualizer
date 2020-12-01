@@ -50,7 +50,7 @@ yarn start
 You will be redirected to `localhost:3000` after starting the development server.
 <p align="center">
 <a href="#">
-    <img src="./public/assets/space.gif" alt="home">
+    <img src="./public/assets/neos.gif" alt="home">
   </a>
 </p>
 
