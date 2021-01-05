@@ -1,6 +1,6 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/39b4f674-839f-452f-9622-e2ea18b1579c/deploy-status)](https://app.netlify.com/sites/neows-api-visualizer/deploys)
 
-# Near Earth Objects Vizualizer
+# Near Earth Objects Visualizer
 There have been speculations of a possible collision between earth and asteroids. [NASA NeoWs API](https://api.nasa.gov/neo/?api_key=DEMO_KEY) provides data collected by satellites it,s numerous and can become difficult to analyze. Near-Earth Objects Visualizer comes in to solve this issue. The data can be presented graphically by recreating space using web technologies such as [webgl](https://get.webgl.org/) and [threejs](https://threejs.org/).
 
 The live version can be found [here](https://neows-api-visualizer.netlify.app/).
